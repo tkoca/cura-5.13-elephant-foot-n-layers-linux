@@ -26,7 +26,7 @@ Resmi AppImage, `CuraEngine`'i kendi içindeki glibc 2.35 ve libstdc++ (GLIBCXX_
 
 ## Derleme
 
-Gereksinimler: Linux x86_64, `podman` (rootless olabilir), `python3`, yaklaşık 10 GB boş disk. İlk derleme tüm bağımlılıkları kaynaktan derlediği için çok daha uzun sürer; sonraki derlemeler yaklaşık 2 dakika sürer.
+Gereksinimler: Linux x86_64, `podman` (rootless olabilir), `python3`, yaklaşık 10 GB boş disk. İlk derleme tüm bağımlılıkları kaynaktan derlediği için 4 çekirdekte (i5-10500) 16 dk 24 sn sürdü; sonraki derlemeler yaklaşık 2 dakika sürer.
 
 ```sh
 # upstream kaynakları (etiket arşivleri)

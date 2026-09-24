@@ -26,7 +26,7 @@ The official AppImage runs `CuraEngine` with its own bundled glibc 2.35 and libs
 
 ## Build
 
-Requirements: Linux x86_64, `podman` (rootless is fine), `python3`, about 10 GB of free disk space. The first build compiles all dependencies from source and takes much longer; later builds take about 2 minutes.
+Requirements: Linux x86_64, `podman` (rootless is fine), `python3`, about 10 GB of free disk space. The first build compiles all dependencies from source and took 16 min 24 s on 4 cores (i5-10500); later builds take about 2 minutes.
 
 ```sh
 # upstream sources (tag archives)

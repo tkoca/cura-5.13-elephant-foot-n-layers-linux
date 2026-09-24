@@ -1,6 +1,6 @@
 # Build image for CuraEngine 5.13.0 (Linux x86_64).
 # Ubuntu 22.04 = glibc 2.35, the glibc bundled in the official Cura 5.13.0 AppImage.
-# GCC 13 = libstdc++ GLIBCXX_3.4.32, the libstdc++ bundled in the AppImage (runtime/compat).
+# GCC 13 from the toolchain PPA. Its runtime libstdc++ is newer (GLIBCXX_3.4.35), so scripts/check-engine.sh verifies that the built engine needs at most GLIBCXX_3.4.32 (the AppImage libstdc++).
 FROM docker.io/library/ubuntu:22.04@sha256:281c5745f657873d78e5531fc5ba8575f46ab7769b94550ac99543f122679986
 
 ENV DEBIAN_FRONTEND=noninteractive LANG=C.UTF-8 LC_ALL=C.UTF-8
