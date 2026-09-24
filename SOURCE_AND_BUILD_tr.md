@@ -9,14 +9,14 @@
 | Yol | İçerik |
 | --- | --- |
 | `patches/CuraEngine-5.13.0.patch` | CuraEngine 5.13.0 `src/slicer.cpp` değişikliği (Windows projesiyle aynı) |
-| `patches/Cura-5.13.0.patch` | Dört Cura kaynak dosyasındaki değişiklikler (Windows projesiyle aynı) |
+| `patches/Cura-5.13.0.patch` | Üç Cura kaynak dosyasındaki değişiklikler (`fdmprinter.def.json`, Türkçe `.po`, `expert.cfg`); Türkçe `.mo`, yamalı `.po` dosyasından `scripts/po2mo.py` ile derlenir (Windows projesiyle aynı) |
 | `scripts/container/Containerfile` | Derleme imajı: Ubuntu 22.04 (sabit digest), GCC 13, Conan 2.32.0, CMake 3.31.6, Ninja 1.13.2, patchelf |
 | `scripts/build-curaengine.sh` | CuraEngine'i konteynerde derler (`--unpatched`: kontrol derlemesi) |
 | `scripts/check-engine.sh` | İkili dosya kontrolleri: GLIBC ≤ 2.35, GLIBCXX ≤ 3.4.32, yorumlayıcı, RPATH yok, derleme makinesi yolu yok |
 | `scripts/apply_patch.py`, `scripts/make_payload.py` | Yamaları uygular; payload'ı üretir (deterministik tar) |
 | `scripts/build-installer.sh` | Kendi kendini açan `.run` dosyasını `dist/` içine üretir |
 | `installer/` | Kurucu (`efnl.sh`), `.run` başlığı, İngilizce/Türkçe mesajlar |
-| `tests/installer-tests.sh` | Kurucu testleri (74 kontrol) |
+| `tests/installer-tests.sh` | Kurucu testleri (77 kontrol) |
 | `tests/engine/` | Resmi Cura 5.13.0 motoruna karşı dilimleme testleri (26 kontrol) |
 | `docs/linux-layout.md` | Resmi 5.13.0 AppImage'ının ölçülmüş yapısı |
 

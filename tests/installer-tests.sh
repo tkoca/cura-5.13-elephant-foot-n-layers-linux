@@ -123,6 +123,13 @@ reset; export EFNL_TEST_FAIL=swap; run install --yes; unset EFNL_TEST_FAIL
 check 'failure at final move: exit 1, clean' '[[ $RC == 1 && ! -e $PREFIX ]] && nostage'
 reset; run install --yes; export EFNL_TEST_FAIL=write; run install --yes; unset EFNL_TEST_FAIL
 check 'failed reinstall keeps the working installation' '[[ $RC == 1 ]] && same_as "$PREFIX" @P && nostage && [[ -x $BIN ]]'
+reset; export EFNL_TEST_FAIL=launcher; run install --yes; unset EFNL_TEST_FAIL
+check 'failure after swap (launchers): exit 1, copy removed' '[[ $RC == 1 && ! -e $PREFIX ]] && nostage && [[ -z $(ls -A "$HOME/.local/opt" 2>/dev/null) ]]'
+reset; run install --yes; export EFNL_TEST_FAIL=launcher; run install --yes; unset EFNL_TEST_FAIL
+check 'failure after swap on reinstall: previous installation restored' '[[ $RC == 1 ]] && same_as "$PREFIX" @P && [[ -x $BIN && -f $DESK ]] && nostage && [[ $(ls -A "$HOME/.local/opt") == cura-5.13-efnl ]]'
+reset; mkdir -p "$HOME/.local"; : > "$HOME/.local/bin"; run install --yes
+check 'HOME/.local/bin is a file: exit 1, nothing installed' '[[ $RC == 1 && ! -e $PREFIX && -f $HOME/.local/bin ]] && nostage'
+rm -f "$HOME/.local/bin"
 
 echo "T10 not enough disk space / no write permission"
 reset; export EFNL_TEST_NEED_MB=99999999; run install --yes; unset EFNL_TEST_NEED_MB

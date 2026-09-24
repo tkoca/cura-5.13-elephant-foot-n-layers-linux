@@ -16,7 +16,7 @@ cp -r "$work/payload" "$work/bundle/installer/payload"
 # Leak check (user name, home, host name) over everything that is shipped.
 pat="$(printf '%s|%s|%s' "$HOME" "/home/$(id -un)" "$(hostname)")"
 if grep -raE -- "$pat" "$work/bundle" >/dev/null; then echo "leak check FAILED:" >&2; grep -ralE -- "$pat" "$work/bundle" >&2; exit 1; fi
-tar --sort=name --mtime=@315532800 --owner=0 --group=0 --numeric-owner --format=gnu \
+tar --sort=name --mtime=@315532800 --owner=0 --group=0 --numeric-owner --mode=u=rwX,go=rX --format=gnu \
     -C "$work/bundle" -cf "$work/bundle.tar" installer
 hdr="$(cat "$REPO/installer/run-header.sh")"
 lines=$(( $(printf '%s\n' "$hdr" | wc -l) + 1 ))

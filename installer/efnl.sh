@@ -179,8 +179,8 @@ check_payload() {
 atomic_write() {  # atomic_write <dest> <mode>  (content on stdin)
   local dest="$1" tmp
   mkdir -p -- "$(dirname -- "$dest")"
-  tmp="$(mktemp "$(dirname -- "$dest")/.${ID}.XXXXXX")"
-  cat > "$tmp"; chmod "$2" "$tmp"; mv -f -- "$tmp" "$dest"
+  tmp="$(mktemp "$(dirname -- "$dest")/.${ID}.XXXXXX")" || return 1
+  { cat > "$tmp" && chmod "$2" "$tmp" && mv -f -- "$tmp" "$dest"; } || { rm -f -- "$tmp"; return 1; }
 }
 
 remove_dir() {  # rename first so that a half-deleted folder is never taken for an installation
@@ -237,9 +237,17 @@ run_machine_part() {  # re-runs this script as root for the machine part
 }
 
 # ------------------------------------------------------------------ install
-write_launchers() {
+launcher_dirs_ok() {  # the menu/command folders exist or can be created, and are writable folders
+  local d
+  for d in "$(dirname -- "$BIN")" "$(dirname -- "$DESKTOP")"; do
+    mkdir -p -- "$d" 2>/dev/null && [[ -d "$d" && -w "$d" ]] || die "$(m no_write "$d")"
+  done
+}
+
+write_launchers() {  # runs in a subshell: returns non-zero on any write error
   local prefix="$1"
-  if [[ -e "$BIN" || -L "$BIN" ]] && ! is_ours "$BIN"; then warn "$(m not_ours "$BIN")"; else
+  set -e
+  if [[ -e "$BIN" || -L "$BIN" ]] && ! is_ours "$BIN"; then printf '%s\n' "$(m not_ours "$BIN")" >> "$LAUNCHER_WARN"; else
     atomic_write "$BIN" 755 <<EOF
 #!/bin/sh
 $MARK
@@ -249,7 +257,7 @@ export XDG_CACHE_HOME
 exec "$prefix/AppRun" "\$@"
 EOF
   fi
-  if [[ -e "$DESKTOP" || -L "$DESKTOP" ]] && ! is_ours "$DESKTOP"; then warn "$(m not_ours "$DESKTOP")"; else
+  if [[ -e "$DESKTOP" || -L "$DESKTOP" ]] && ! is_ours "$DESKTOP"; then printf '%s\n' "$(m not_ours "$DESKTOP")" >> "$LAUNCHER_WARN"; else
     local exec_path="$BIN"; exec_path="${exec_path//\\/\\\\}"; exec_path="${exec_path// /\\s}"
     atomic_write "$DESKTOP" 644 <<EOF
 [Desktop Entry]
@@ -273,8 +281,9 @@ EOF
 }
 
 machine_install() {
-  local parent stage="" old="" i
+  local parent stage="" old="" i line
   parent="$(dirname -- "$PREFIX")"
+  launcher_dirs_ok
   mkdir -p -- "$parent" 2>/dev/null || die "$(m no_write "$parent")"
   [[ -w "$parent" ]] || die "$(m no_write "$parent")"
   no_links "$PREFIX" || die "$(m foreign_dir "$PREFIX")"
@@ -331,22 +340,31 @@ EOF
   printf '%s' "$manifest" > "$root/.efnl/manifest"   # written last: marks a complete installation
   chmod -R go-w "$root"
 
-  # Swap into place.
+  # Swap into place. The previous installation (if any) is kept until the new one is verified
+  # and the launchers are written, so that any failure restores the exact previous state.
   if [[ -e "$PREFIX" ]]; then
     old="$parent/.$ID.old-$$-$RANDOM"
     mv -- "$PREFIX" "$old" || cleanup_fail "rename"
     if ! mv -- "$root" "$PREFIX"; then mv -- "$old" "$PREFIX"; cleanup_fail "rename"; fi
-    rm -rf -- "$old"
   elif [[ -n "$TEST_ROOT" && "${EFNL_TEST_FAIL:-}" == swap ]]; then cleanup_fail "test"
   else
     mv -- "$root" "$PREFIX" || cleanup_fail "rename"
   fi
-  rm -rf -- "$stage"; trap - EXIT
-  # Post-swap verification
+  rollback() {  # rollback <reason>: remove the new copy, put the previous one back
+    rm -rf -- "$PREFIX"
+    [[ -n "$old" ]] && mv -- "$old" "$PREFIX"
+    rm -rf -- "$stage"; trap - EXIT
+    die "$(m failed_rollback "$1")"
+  }
   for i in "${!FILES[@]}"; do
-    [[ "$(sha "$PREFIX/${FILES[$i]}")" == "$(payload_hash "$i")" ]] || { remove_dir "$PREFIX"; die "$(m failed_rollback "$(m verify_failed "${FILES[$i]}")")"; }
+    [[ "$(sha "$PREFIX/${FILES[$i]}")" == "$(payload_hash "$i")" ]] || rollback "$(m verify_failed "${FILES[$i]}")"
   done
-  write_launchers "$PREFIX"
+  if [[ -n "$TEST_ROOT" && "${EFNL_TEST_FAIL:-}" == launcher ]]; then rollback "test"; fi
+  LAUNCHER_WARN="$stage/launcher-warnings"; : > "$LAUNCHER_WARN"
+  ( write_launchers "$PREFIX" ) || rollback "launcher"
+  while IFS= read -r line; do warn "$line"; done < "$LAUNCHER_WARN"
+  [[ -n "$old" ]] && rm -rf -- "$old"
+  rm -rf -- "$stage"; trap - EXIT
 }
 
 do_install() {

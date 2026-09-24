@@ -9,14 +9,14 @@ Everything needed to rebuild `Cura-5.13-Elephant-Foot-N-Layers-Linux-x86_64.run`
 | Path | Content |
 | --- | --- |
 | `patches/CuraEngine-5.13.0.patch` | Change to `src/slicer.cpp` of CuraEngine 5.13.0 (identical to the Windows project) |
-| `patches/Cura-5.13.0.patch` | Changes to the four Cura resource files (identical to the Windows project) |
+| `patches/Cura-5.13.0.patch` | Changes to three Cura resource files (`fdmprinter.def.json`, Turkish `.po`, `expert.cfg`); the Turkish `.mo` is compiled from the patched `.po` by `scripts/po2mo.py` (identical to the Windows project) |
 | `scripts/container/Containerfile` | Build image: Ubuntu 22.04 (pinned digest), GCC 13, Conan 2.32.0, CMake 3.31.6, Ninja 1.13.2, patchelf |
 | `scripts/build-curaengine.sh` | Builds CuraEngine in the container (`--unpatched` for a control build) |
 | `scripts/check-engine.sh` | Binary checks: GLIBC ≤ 2.35, GLIBCXX ≤ 3.4.32, interpreter, no RPATH, no build-host paths |
 | `scripts/apply_patch.py`, `scripts/make_payload.py` | Apply the patches; build the payload (deterministic tar) |
 | `scripts/build-installer.sh` | Builds the self-extracting `.run` file into `dist/` |
 | `installer/` | Installer (`efnl.sh`), `.run` header, English/Turkish messages |
-| `tests/installer-tests.sh` | Installer tests (74 checks) |
+| `tests/installer-tests.sh` | Installer tests (77 checks) |
 | `tests/engine/` | Slicing tests (26 checks) against the official Cura 5.13.0 engine |
 | `docs/linux-layout.md` | Measured layout of the official 5.13.0 AppImage |
 
