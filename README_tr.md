@@ -6,6 +6,8 @@ Bu, **Linux x86_64 üzerindeki UltiMaker Cura 5.13.0** (resmi AppImage) için re
 
 Bu depo, [cura-5.13-elephant-foot-n-layers](https://github.com/tkoca/cura-5.13-elephant-foot-n-layers) (Windows) projesinin Linux karşılığıdır. İkisi de aynı yamaları, aynı ayarları ve aynı kaynak dosyalarını kullanır.
 
+> **macOS:** macOS sürümü (Apple çipli Mac'ler) ayrı bir depodadır: [cura-5.13-elephant-foot-n-layers-macos](https://github.com/tkoca/cura-5.13-elephant-foot-n-layers-macos).
+
 > Bu bir topluluk projesidir. UltiMaker bu projeyi geliştirmemiştir, onaylamamıştır ve desteklememektedir.
 
 ## Ayarlar

@@ -6,6 +6,8 @@ An unofficial add-on for **UltiMaker Cura 5.13.0 on Linux x86_64** (the official
 
 This is the Linux counterpart of [cura-5.13-elephant-foot-n-layers](https://github.com/tkoca/cura-5.13-elephant-foot-n-layers) (Windows). Both use the same patches, the same settings and the same resource files.
 
+> **macOS:** the macOS version (Apple silicon) is in a separate repository: [cura-5.13-elephant-foot-n-layers-macos](https://github.com/tkoca/cura-5.13-elephant-foot-n-layers-macos).
+
 > This is a community project. It is not made, endorsed or supported by UltiMaker.
 
 ## Settings
